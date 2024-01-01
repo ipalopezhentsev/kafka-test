@@ -4,5 +4,5 @@ plugins {
 rootProject.name = "kafka"
 include(
     "producer-raw", "consumer-raw",
-//    "producer-spring", "consumer-spring"
+    "producer-spring", "consumer-spring"
 )

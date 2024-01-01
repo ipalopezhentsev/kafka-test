@@ -1,8 +1,5 @@
 plugins {
-    // Apply the common convention plugin for shared build configuration between library and application projects.
     id("kotlin-common-conventions")
-
-    // Apply the application plugin to add support for building a CLI application in Java.
     application
 }
 
@@ -12,4 +9,7 @@ dependencies {
     }
 
     implementation("org.apache.kafka:kafka-clients")
+    implementation("org.slf4j:slf4j-simple") {
+        because("otherwise there will be no console logs even on fails")
+    }
 }

@@ -1,7 +1,7 @@
 plugins {
-    id("kotlin-application-conventions")
+    id("kotlin-spring-boot-app-conventions")
 }
 
 application {
-    mainClass.set("de.iliks.ConsumerSpringApplication")
+    mainClass.set("de.iliks.ConsumerSpringApplicationKt")
 }

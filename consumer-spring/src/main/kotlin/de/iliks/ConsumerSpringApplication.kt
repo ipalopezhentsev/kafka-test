@@ -1,8 +1,11 @@
 package de.iliks
 
-object ConsumerSpringApplication {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        println("Hello world!")
-    }
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.runApplication
+
+@SpringBootApplication
+class ConsumerSpringApplication
+
+fun main(args: Array<String>) {
+    runApplication<ConsumerSpringApplication>(*args)
 }

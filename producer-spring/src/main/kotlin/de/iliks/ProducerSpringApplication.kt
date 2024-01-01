@@ -1,7 +1,11 @@
-package de.iliks;
+package de.iliks
 
-public class ProducerSpringApplication {
-    public static void main(String[] args) {
-        System.out.println("Hello world!");
-    }
+import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.runApplication
+
+@SpringBootApplication
+class ProducerSpringApplication
+
+fun main(args: Array<String>) {
+    runApplication<ProducerSpringApplication>(*args)
 }

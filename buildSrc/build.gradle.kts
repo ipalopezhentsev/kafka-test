@@ -4,10 +4,13 @@ plugins {
 }
 
 repositories {
-    // Use the plugin portal to apply community plugins in convention plugins.
     gradlePluginPortal()
 }
 
 dependencies {
-    implementation(libs.kotlin.gradle.plugin)
+    val kotlinVer = "1.9.22"
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVer")
+    implementation("org.jetbrains.kotlin:kotlin-allopen:$kotlinVer")
+    implementation("org.springframework.boot:spring-boot-gradle-plugin:3.2.1")
+    implementation("io.spring.gradle:dependency-management-plugin:1.1.4")
 }
