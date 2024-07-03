@@ -1,0 +1,60 @@
+#https://www.baeldung.com/ops/kafka-docker-setup
+#https://habr.com/ru/articles/738874/
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    volumes:
+      - zk-data:/var/lib/zookeeper/data
+      - zk-txn-logs:/var/lib/zookeeper/log
+    ports:
+      - 22181:2181
+
+  
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    ports:
+      - 9092:29092
+    #for external (host) clients
+      - 9093:29093
+    volumes:
+      - kafka-data:/var/lib/kafka/data
+    environment:
+      #https://docs.confluent.io/platform/current/installation/docker/config-reference.html
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      #this is instruction for _internal_ (container) broker to create two listeners on two different ports.
+      #we'll use port 29092 for intra-docker services (see kafka-ui below) and 29093 for outside (host) clients
+      #(which for them would be mapped to 9093).
+      KAFKA_LISTENERS: INTERNAL://kafka:29092,OUTSIDE://kafka:29093
+      #and this is what kafka will give to client depending on which port it connected to first bootstrap broker -
+      #the idea is that host (i.e. outside container) client should connect via port that is mapped to outside
+      #port 9093, which is mapped to inside port 29093 - then kafka will give him address 127.0.0.1:9093 to which
+      #host client will be able to connect because it's mapped to 29093 in container and we have listener in container
+      #on this port. And Docker-internal clients (e.g. kafka-ui below) will connect to kafka:29092 and Kafka will
+      #give them address of "internal" listener, i.e. kafka:29092 which they will use.
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:29092,OUTSIDE://127.0.0.1:9093
+      #This "INTERNAL" and "OUTSIDE" are our names, they have to be mapped to well-known Kafka protocols in this map:
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    ports:
+      - 8090:8080
+    restart: always
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:29092
+      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
+volumes:
+  zk-data:
+  zk-txn-logs:
+  kafka-data:
